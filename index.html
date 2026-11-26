@@ -28,9 +28,43 @@
 .paper-page h3{margin-top:3mm}.paper-page h4{margin-top:3mm}.paper-page h5{margin-top:2mm}
 .paper-page .oversized-block{max-height:100%;overflow:hidden}
 @media print{#print-only{display:block!important}#paperPrint.paper-stack{display:block!important;zoom:1!important}#paperPrint .paper-page{width:210mm!important;height:297mm!important;min-height:297mm!important;max-height:297mm!important;padding:18mm 18mm 18mm!important;margin:0!important;box-shadow:none!important;break-after:page;page-break-after:always;overflow:hidden!important}#paperPrint .paper-page:last-child{break-after:auto;page-break-after:auto}#paperPrint .paper-columns-flow{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:9mm!important}#paperPrint .paper-column-flow{overflow:hidden!important}}
+
+/* Cross-platform, user-initiated file save for Android and iPadOS Safari */
+[hidden]{display:none!important}
+#saveFileOverlay{position:fixed;inset:0;z-index:9999;background:rgba(10,40,48,.67);display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:16px}
+#saveFilePanel{background:#fff;color:#183c49;width:min(510px,100%);max-height:min(94dvh,820px);overflow-y:auto;padding:24px 24px 19px;border-radius:22px;box-shadow:0 24px 70px rgba(0,0,0,.24);font-family:inherit;line-height:1.53}
+#saveFilePanel h3{color:#087f90;font-size:22px;margin:0 0 4px}
+#saveFilePanel p{font-size:14px;margin:11px 0;word-break:keep-all}
+#saveFilePanel .file-meta{background:#eaf8f8;border:1px solid #c7ebed;border-radius:12px;padding:11px 13px;font-size:14px;font-weight:800;overflow-wrap:anywhere}
+#saveFilePanel .file-meta small{font-size:11px;font-weight:600;color:#63818c}
+#saveFilePanel .download-actions{display:grid;gap:9px;margin:16px 0}
+#saveFilePanel .dl-action{display:block;box-sizing:border-box;width:100%;padding:12px;border-radius:12px;background:#087f90;border:1px solid #087f90;color:#fff;text-decoration:none;font-size:16px;font-weight:800;cursor:pointer;text-align:center;font-family:inherit;line-height:1.5}
+#saveFilePanel .dl-action:hover{background:#066f7e}
+#saveFilePanel .dl-action.secondary{background:#fff;color:#087f90}
+#saveFilePanel .dl-action.secondary:hover{background:#edfafa}
+#saveFilePanel .dl-action:focus-visible{outline:3px solid #63ced5;outline-offset:3px}
+#saveFilePanel .save-hint{background:#f7fafb;border-left:3px solid #21a9ab;border-radius:7px;font-size:13px;padding:10px 12px;white-space:pre-line;color:#315f69}
+#saveFilePanel .save-footnote{font-size:12px;color:#66818c;margin-bottom:0}
+@media(max-width:500px){#saveFilePanel{padding:18px 16px;border-radius:17px}#saveFilePanel h3{font-size:20px}#saveFilePanel .dl-action{font-size:15px}}
 </style>
 </head>
 <body>
+<!-- The second, direct tap is required: iPadOS and Android can reject async, automatic downloads. -->
+<div id="saveFileOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="saveFileTitle">
+ <div id="saveFilePanel">
+  <h3 id="saveFileTitle">파일 준비 완료</h3>
+  <p>논문 파일은 <strong>생성되었습니다.</strong> 아래 버튼을 직접 눌러 기기에 저장하세요.</p>
+  <div class="file-meta"><span id="saveFileName">research.docx</span><br><small id="saveFileMeta">Word · 0 KB</small></div>
+  <div class="download-actions">
+   <a id="saveFileDownload" class="dl-action" href="#" download="research.docx">↓ 파일 다운로드</a>
+   <button id="saveFileShare" class="dl-action secondary" type="button" hidden>↗ 공유 메뉴 열기 / 파일에 저장</button>
+   <button id="saveFileClose" class="dl-action secondary" type="button">닫기</button>
+  </div>
+  <div id="saveDeviceHint" class="save-hint">브라우저 다운로드 목록 또는 기기 파일 앱에서 확인하세요.</div>
+  <p class="save-footnote">※ 파일 생성과 실제 기기 저장은 다릅니다. 저장되었는지는 파일 앱에서 확인하세요.<br>※ 카카오톡·ChatGPT 안의 웹뷰보다는 갤럭시 Chrome / 아이패드 Safari 사용을 권장합니다.</p>
+ </div>
+</div>
+
 <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"><symbol id="i-print" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6zM14 2v5h5M9 12h7M9 16h7" stroke="currentColor" fill="none" stroke-width="1.8"/></symbol><symbol id="i-save" viewBox="0 0 24 24"><path d="M4 3h14l3 3v15H3V3zM7 3v7h10V3M7 21v-8h10v8" stroke="currentColor" fill="none" stroke-width="1.7"/></symbol></svg>
 <div class="shell">
 <header class="topbar"><div class="brand"><span class="logo">≈</span><span>안성여자고등학교 R&E<em>ACADEMIC PAPER WRITING STUDIO</em></span></div><div class="topright"><span class="savetxt" id="saveStatus" aria-live="polite">이 브라우저에 자동 저장</span><button class="btn" id="backupBtn"><svg><use href="#i-save"/></svg>백업</button><button class="btn primary" id="previewBtn"><svg><use href="#i-file"/></svg>논문 미리보기</button></div></header>
@@ -81,7 +115,7 @@
 <div class="field"><label for="references">참고문헌 <span class="pill">한 줄에 한 자료</span></label><textarea id="references" class="tall" data-bind="references" placeholder="[저자명]. (발행연도). [논문명]. [학술지명 또는 발행기관].&#10;[기관명]. (발행연도). [통계 또는 보고서 제목]. [URL]"></textarea><span class="subtxt">사이트 링크뿐 아니라 저자 또는 기관, 제목, 발행연도를 확인하세요.</span></div>
 <div class="section-title">최종 점검표</div><div class="checklist"><label><input type="checkbox" id="check1"> 조사하지 않은 결과를 사실처럼 작성하지 않았습니다.</label><label><input type="checkbox" id="check2"> 표·그래프의 수치와 본문 설명이 일치합니다.</label><label><input type="checkbox" id="check3"> 참고문헌은 원문을 확인하고 기록했습니다.</label><label><input type="checkbox" id="check4"> 학생·응답자의 개인정보가 포함되어 있지 않습니다.</label></div>
 <div class="section-title" style="margin-top:22px">보고서 내보내기</div><div class="actionline"><button id="printBtn" class="btn primary" type="button"><svg><use href="#i-print"/></svg>PDF로 인쇄</button><button id="docBtn" class="btn" type="button">서식 유지 Word .docx 저장</button><button id="textBtn" class="btn" type="button">텍스트 저장</button><button id="jsonBtn" class="btn" type="button">백업 .json</button><button id="loadBtn" class="btn" type="button">백업 불러오기</button><input class="file-input" id="importFile" type="file" accept=".json,application/json"></div>
-<div class="hint"><b>AI 교정 보조</b>　아래 버튼은 직접 작성한 원고를 바탕으로, 임의의 데이터·출처 생성 없이 문장과 구성만 점검하도록 요청하는 프롬프트를 복사합니다.</div><div class="actionline"><button id="copyAiBtn" class="btn" type="button">AI 교정용 프롬프트 복사</button><button id="demoBtn" class="btn" type="button">가상 예시 불러오기</button><button id="clearBtn" class="btn warning" type="button">작성 내용 초기화</button></div><p class="status">※ GitHub Pages에서 사용할 수 있는 정적 HTML입니다. 작성 내용은 서버나 교사에게 자동 전송되지 않습니다.</p>
+<div class="hint"><b>AI 교정 보조</b>　아래 버튼은 직접 작성한 원고를 바탕으로, 임의의 데이터·출처 생성 없이 문장과 구성만 점검하도록 요청하는 프롬프트를 복사합니다.</div><div class="actionline"><button id="copyAiBtn" class="btn" type="button">AI 교정용 프롬프트 복사</button><button id="demoBtn" class="btn" type="button">가상 예시 불러오기</button><button id="clearBtn" class="btn warning" type="button">작성 내용 초기화</button></div><p class="status">※ Word·JSON·TXT 파일은 다운로드 또는 공유 메뉴로 저장합니다. PDF는 인쇄 화면에서 PDF로 저장하세요. 작성 내용은 서버나 교사에게 자동 전송되지 않습니다.</p>
 </section>
 <div class="foot-actions"><button class="btn subtle" id="prevBtn" type="button">← 이전 단계</button><button class="btn primary" id="nextBtn" type="button">다음 단계 →</button></div>
 </div>
@@ -130,10 +164,10 @@ p+=`<div class="paper-block">${h3('Ⅴ. 논의 및 결론')}`;[['1. 요약','con
 if(nonEmpty(data.references)){p+=`<div class="paper-block">${h3('참고문헌')}${lines(data.references).map(ref=>`<p class="ref-p">${escapeHTML(ref)}</p>`).join('')}</div>`}return p+'</div></div>'}
 function refreshPaper(){let html=buildPaper();$('paperLive').innerHTML=html;$('paperPrint').innerHTML=html;}
 function refreshPaperIfVisible(){if(previewMode){refreshPaper()}}
-function exportBlob(contents,type,ext){const blob=new Blob([contents],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`${filename()}.${ext}`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),6000)}
-function exportJson(){exportBlob(JSON.stringify({...data,version:1,exportedAt:new Date().toISOString()},null,2),'application/json;charset=utf-8','json');toast('백업 파일을 저장했습니다.')}
+function exportBlob(contents,type,ext){const blob=new Blob([contents],{type});showSaveFileDialog(blob,`${filename()}.${ext}`,ext.toUpperCase());}
+function exportJson(){exportBlob(JSON.stringify({...data,version:1,exportedAt:new Date().toISOString()},null,2),'application/json;charset=utf-8','json');toast('백업 파일 준비 완료 — 열린 창에서 다운로드나 공유를 누르세요.')}
 function plainReport(){let t=[];const add=(...xs)=>{xs.forEach(x=>{if(nonEmpty(x))t.push(String(x).trim())})};add(data.title||'연구 제목',data.authors.filter(x=>nonEmpty(x.name)).map(x=>`${x.name} (${x.grade||'0'}학년 ${x.className||'0'}반)`).join(' / '),'\n<초록>',data.abstract,'\n주제어: '+data.keywords,'\nⅠ. 서론','1. 탐구의 필요성 및 목적',data.introPurpose,'2. 탐구 문제');lines(data.introQuestions).forEach((q,i)=>add(`${ordinals[i]||'추가'}, ${q.replace(/^(첫째|둘째|셋째|넷째|다섯째|여섯째)\s*[,，.、]?\s*/,'')}`));add('\nⅡ. 이론적 배경',data.theoryIntro);data.theory.forEach((x,i)=>add(`${i+1}. ${x.heading}`,x.body));add('\nⅢ. 탐구 방법','1. 탐구 대상',data.methodSubject,'2. 탐구 절차',data.methodSteps,'3. 자료 수집 방법 및 절차',data.methodCollection,'\nⅣ. 탐구 결과 및 분석','1. 탐구 결과');data.results.forEach((x,i)=>add(`${i+1}. ${x.heading}`,x.body));if(nonEmpty(data.chartCsv))add(data.chartTitle,data.chartCsv);if(data.figureImage)add(data.figureCaption);add('2. 탐구 결과 분석',data.resultAnalysis,'\nⅤ. 논의 및 결론');[['1. 요약','conclusionSummary'],['2. 논의','conclusionDiscussion'],['3. 결론','conclusionAnswer'],['4. 한계 및 제언','conclusionLimits']].forEach(([h,k])=>{if(nonEmpty(data[k]))add(h,data[k])});add('\n참고문헌',data.references);return (data.demo?'[교육용 가상 데이터 예시 — 실제 연구로 제출 금지]\n\n':'')+t.join('\n\n')}
-function exportTxt(){exportBlob(plainReport(),'text/plain;charset=utf-8','txt');toast('텍스트 파일을 저장했습니다.')}
+function exportTxt(){exportBlob(plainReport(),'text/plain;charset=utf-8','txt');toast('텍스트 파일 준비 완료 — 열린 창에서 다운로드나 공유를 누르세요.')}
 function exportDoc(){let html=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>@page{size:A4;margin:17mm}body{font-family:Batang,serif;font-size:10pt;color:#111;line-height:1.7}.paper-title{font-size:17pt;text-align:center;font-weight:bold;margin:0 0 12pt}.paper-authors{text-align:center;margin-bottom:20pt}.paper-author{display:inline-block;margin:0 12pt}.paper-abstract-title{text-align:center;font-weight:bold}.paper-columns{column-count:2;column-gap:24pt}h3{text-align:center;font-size:12pt;margin:20pt 0 8pt}h4{font-size:10pt;margin:12pt 0 5pt}h5{font-size:9.5pt}p{margin:0 0 8pt;text-align:justify;white-space:pre-wrap}table{width:100%;border-collapse:collapse;font-size:8pt}td,th{border:1px solid #555;padding:4pt}.figure svg{width:100%;height:auto}.figure img{max-width:100%}.demo-warning{color:#a51e00;font-weight:bold}</style></head><body>${buildPaper()}</body></html>`;exportBlob('\ufeff'+html,'application/msword;charset=utf-8','doc');toast('Word용 .doc 파일을 저장했습니다. Word에서 열어 형식을 확인하세요.')}
 function copyAi(){let prompt=`당신은 고등학교 R&E 학술집 보고서를 교정하는 조교입니다. 아래는 학생이 직접 작성한 초안입니다.\n\n[요청]\n1. 학교 목차(제목, 저자, 초록, 주제어, Ⅰ. 서론, Ⅱ. 이론적 배경, Ⅲ. 탐구 방법, Ⅳ. 탐구 결과 및 분석, Ⅴ. 논의 및 결론, 참고문헌)에 맞춰 형식과 누락된 항목을 점검해 주세요.\n2. 맞춤법과 띄어쓰기, 비문을 찾아 '원문 → 수정안 → 수정 이유'로 설명해 주세요.\n3. 연구 질문과 결과, 결론이 논리적으로 연결되는지 검토해 주세요.\n4. 실제 데이터·수치·설문 결과·참고문헌을 임의로 만들거나 변경하지 마세요. 불명확한 정보는 '확인 필요'라고 표시하세요.\n5. 과장된 인과 표현을 줄이고, 고등학생 수준의 명확한 논문형 문장으로 제안해 주세요.\n\n[원고]\n`;prompt+=plainReport();const finish=()=>toast('AI 교정 프롬프트를 복사했습니다. ChatGPT에 붙여 넣으세요.');if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(prompt).then(finish).catch(()=>fallbackCopy(prompt,finish))}else fallbackCopy(prompt,finish)}
 function fallbackCopy(s,done){let ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.append(ta);ta.select();let ok=document.execCommand('copy');ta.remove();if(ok)done();else toast('복사를 지원하지 않는 브라우저입니다. 다른 브라우저를 사용하세요.')}
@@ -304,9 +338,66 @@ async function buildDocx(){
   files['word/_rels/document.xml.rels']=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${imgs.map(im=>`<Relationship Id="rId${im.id}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image${im.id}.${im.type}"/>`).join('')}</Relationships>`;
   return makeZip(files);
 }
+
+let currentFileUrl=null, currentShareFile=null;
+function isAppleTablet(){return /iPad|iPhone|iPod/i.test(navigator.userAgent)||(/Macintosh/i.test(navigator.userAgent)&&navigator.maxTouchPoints>1)}
+function showSaveFileDialog(blob,name,description){
+  if(currentFileUrl)URL.revokeObjectURL(currentFileUrl);
+  currentFileUrl=URL.createObjectURL(blob);
+  const link=document.getElementById('saveFileDownload');
+  link.href=currentFileUrl;link.download=name;
+  document.getElementById('saveFileName').textContent=name;
+  document.getElementById('saveFileMeta').textContent=`${description||'파일'} · ${(blob.size/1024).toFixed(1)} KB`;
+  currentShareFile=null;
+  try{currentShareFile=new File([blob],name,{type:blob.type||'application/octet-stream',lastModified:Date.now()})}catch(e){}
+  const button=document.getElementById('saveFileShare');
+  let canShare=false;
+  try{canShare=!!(currentShareFile&&navigator.share&&navigator.canShare&&navigator.canShare({files:[currentShareFile]}))}catch(e){}
+  button.hidden=!canShare;
+  let hint;
+  if(isAppleTablet()){
+    hint='아이패드 Safari 저장 방법:\n① 「공유 메뉴 열기」 → 「파일에 저장」 선택 (가능한 경우)\n② 또는 「파일 다운로드」 누르기 → Safari 다운로드 목록 → 파일 앱의 다운로드 폴더 확인';
+  }else if(/Android/i.test(navigator.userAgent)){
+    hint='갤럭시 탭 Chrome 저장 방법:\n① 「파일 다운로드」 직접 누르기\n② 내 파일 → 다운로드 폴더 확인\n③ 안 되면 「공유 메뉴 열기」에서 Drive나 파일 관리 앱 선택';
+  }else{
+    hint='PC 저장 방법: 「파일 다운로드」를 누른 뒤 브라우저의 다운로드 폴더에서 확인하세요.';
+  }
+  document.getElementById('saveDeviceHint').textContent=hint;
+  const overlay=document.getElementById('saveFileOverlay');
+  overlay.hidden=false;
+  (isAppleTablet()&&canShare?button:link).focus();
+}
+document.getElementById('saveFileClose').addEventListener('click',()=>document.getElementById('saveFileOverlay').hidden=true);
+document.getElementById('saveFileOverlay').addEventListener('click',e=>{if(e.target.id==='saveFileOverlay')e.currentTarget.hidden=true});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('saveFileOverlay').hidden=true});
+document.getElementById('saveFileDownload').addEventListener('click',()=>{
+  toast('파일 다운로드를 요청했습니다. 파일 앱이나 다운로드 목록에서 확인하세요.');
+});
+document.getElementById('saveFileShare').addEventListener('click',async()=>{
+  if(!currentShareFile||!navigator.share)return;
+  try{
+    // Web Share needs to be invoked directly by an actual tap, before any await.
+    await navigator.share({files:[currentShareFile],title:'안성여고 R&E 학술집 논문',text:'논문 작성 웹앱에서 만든 파일'});
+    toast('공유 메뉴가 처리되었습니다. 실제 저장 위치는 선택한 앱에서 확인하세요.');
+  }catch(e){
+    if(e.name!=='AbortError')toast('공유 기능을 사용할 수 없습니다. 파일 다운로드를 눌러주세요.');
+  }
+});
+window.addEventListener('pagehide',()=>{if(currentFileUrl)URL.revokeObjectURL(currentFileUrl)});
 exportDoc=async function(){
-  try{toast('A4 2단 Word 문서를 만드는 중입니다.');const blob=await buildDocx();const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename()+'.docx';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);toast('편집 가능한 .docx 문서를 저장했습니다.')}
-  catch(e){console.error(e);toast('Word 저장 실패: '+String(e.message||e))}
+  const button=document.getElementById('docBtn');
+  if(button.disabled)return;
+  button.disabled=true;
+  try{
+    toast('Word(.docx) 파일을 만드는 중입니다.');
+    const blob=await buildDocx();
+    if(!blob||blob.size<100)throw new Error('Word 파일 크기가 올바르지 않습니다.');
+    showSaveFileDialog(blob,filename()+'.docx','서식 유지 Word 문서');
+    toast('Word 파일을 만들었습니다. 열린 창에서 다운로드 또는 공유를 선택하세요.');
+  }catch(e){
+    console.error(e);
+    alert('Word 파일 생성에 실패했습니다: '+String(e.message||e)+'\n작성 내용이 사라지지 않도록 JSON 백업 후 다시 시도해 주세요.');
+  }finally{button.disabled=false}
 };
 
 safeLoad();readFields();bind();refreshProgress();refreshMini();showStep(0);save();
