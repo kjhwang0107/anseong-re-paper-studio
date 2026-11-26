@@ -15,6 +15,19 @@
 @page{size:A4;margin:0}
 #print-only{display:none}
 @media print{html,body{background:white!important;margin:0;padding:0;overflow:visible!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.shell,.toast{display:none!important}#print-only{display:block!important}.paper{width:210mm;min-height:0;padding:17mm 17mm 19mm;margin:0;box-shadow:none;border:0;font-size:9.2pt}.paper h3{break-after:avoid}.paper h4{break-after:avoid}.paper-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9mm;align-items:start}.paper .figure,.paper table{break-inside:avoid-page;page-break-inside:avoid}.paper-block{break-inside:avoid-page;page-break-inside:avoid}.paper .demo-warning{display:block!important}}
+
+/* v2: A4 페이지별 연속 2단 편집 */
+.paper-stack{display:flex;flex-direction:column;gap:18px;align-items:center;zoom:1}
+.paper-page{width:210mm;height:297mm;min-height:297mm;box-sizing:border-box;padding:18mm 18mm 18mm;position:relative;overflow:hidden;flex-shrink:0}
+.paper-first-header{display:flow-root}
+.paper-columns-flow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9mm;align-items:start;overflow:hidden}
+.paper-column-flow{display:flow-root;min-width:0;align-self:start}
+.paper-column-flow .figure{margin:2mm 0 3mm}
+.paper-page-no{position:absolute;bottom:7mm;left:0;right:0;text-align:center;font-size:8pt;color:#88939b}
+.pagination-stage{position:absolute;top:0;left:-99999px;width:210mm;visibility:hidden;pointer-events:none}
+.paper-page h3{margin-top:3mm}.paper-page h4{margin-top:3mm}.paper-page h5{margin-top:2mm}
+.paper-page .oversized-block{max-height:100%;overflow:hidden}
+@media print{#print-only{display:block!important}#paperPrint.paper-stack{display:block!important;zoom:1!important}#paperPrint .paper-page{width:210mm!important;height:297mm!important;min-height:297mm!important;max-height:297mm!important;padding:18mm 18mm 18mm!important;margin:0!important;box-shadow:none!important;break-after:page;page-break-after:always;overflow:hidden!important}#paperPrint .paper-page:last-child{break-after:auto;page-break-after:auto}#paperPrint .paper-columns-flow{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:9mm!important}#paperPrint .paper-column-flow{overflow:hidden!important}}
 </style>
 </head>
 <body>
@@ -67,16 +80,16 @@
 <section class="section" data-section="6"><div class="mini">FINAL STEP <span class="pill">참고문헌 · 제출</span></div><h2>출처를 확인하고 제출하세요</h2><p class="desc">학교 양식에 표시된 필수 목차에 참고문헌을 덧붙여 연구에서 활용한 자료의 출처를 기록합니다. 반드시 실제 존재하는 자료만 기재하세요.</p>
 <div class="field"><label for="references">참고문헌 <span class="pill">한 줄에 한 자료</span></label><textarea id="references" class="tall" data-bind="references" placeholder="[저자명]. (발행연도). [논문명]. [학술지명 또는 발행기관].&#10;[기관명]. (발행연도). [통계 또는 보고서 제목]. [URL]"></textarea><span class="subtxt">사이트 링크뿐 아니라 저자 또는 기관, 제목, 발행연도를 확인하세요.</span></div>
 <div class="section-title">최종 점검표</div><div class="checklist"><label><input type="checkbox" id="check1"> 조사하지 않은 결과를 사실처럼 작성하지 않았습니다.</label><label><input type="checkbox" id="check2"> 표·그래프의 수치와 본문 설명이 일치합니다.</label><label><input type="checkbox" id="check3"> 참고문헌은 원문을 확인하고 기록했습니다.</label><label><input type="checkbox" id="check4"> 학생·응답자의 개인정보가 포함되어 있지 않습니다.</label></div>
-<div class="section-title" style="margin-top:22px">보고서 내보내기</div><div class="actionline"><button id="printBtn" class="btn primary" type="button"><svg><use href="#i-print"/></svg>PDF로 인쇄</button><button id="docBtn" class="btn" type="button">Word용 .doc 저장</button><button id="textBtn" class="btn" type="button">텍스트 저장</button><button id="jsonBtn" class="btn" type="button">백업 .json</button><button id="loadBtn" class="btn" type="button">백업 불러오기</button><input class="file-input" id="importFile" type="file" accept=".json,application/json"></div>
+<div class="section-title" style="margin-top:22px">보고서 내보내기</div><div class="actionline"><button id="printBtn" class="btn primary" type="button"><svg><use href="#i-print"/></svg>PDF로 인쇄</button><button id="docBtn" class="btn" type="button">서식 유지 Word .docx 저장</button><button id="textBtn" class="btn" type="button">텍스트 저장</button><button id="jsonBtn" class="btn" type="button">백업 .json</button><button id="loadBtn" class="btn" type="button">백업 불러오기</button><input class="file-input" id="importFile" type="file" accept=".json,application/json"></div>
 <div class="hint"><b>AI 교정 보조</b>　아래 버튼은 직접 작성한 원고를 바탕으로, 임의의 데이터·출처 생성 없이 문장과 구성만 점검하도록 요청하는 프롬프트를 복사합니다.</div><div class="actionline"><button id="copyAiBtn" class="btn" type="button">AI 교정용 프롬프트 복사</button><button id="demoBtn" class="btn" type="button">가상 예시 불러오기</button><button id="clearBtn" class="btn warning" type="button">작성 내용 초기화</button></div><p class="status">※ GitHub Pages에서 사용할 수 있는 정적 HTML입니다. 작성 내용은 서버나 교사에게 자동 전송되지 않습니다.</p>
 </section>
 <div class="foot-actions"><button class="btn subtle" id="prevBtn" type="button">← 이전 단계</button><button class="btn primary" id="nextBtn" type="button">다음 단계 →</button></div>
 </div>
-<div class="panel tabs-preview hidden" id="fullPreviewPanel"><div class="previewtop"><div><div class="mini">LIVE PREVIEW · A4 2단</div><h2>학술집 형식 미리보기</h2></div><div class="actionline"><button class="btn" id="backEditorBtn">← 편집으로 돌아가기</button><button class="btn" id="zoomOutBtn" title="미리보기 축소">−</button><span id="zoomPct" style="font-size:12px;color:#63818c;font-weight:800">맞춤</span><button class="btn" id="zoomInBtn" title="미리보기 확대">＋</button><button class="btn primary" id="previewPrintBtn"><svg><use href="#i-print"/></svg>PDF로 인쇄</button></div></div><div class="paper-wrap" id="previewPaperWrap"><div class="paper" id="paperLive"></div></div><div class="hint">학교 원본 양식의 목차·2단 구성에 맞춘 <b>작성용 미리보기</b>입니다. 실제 인쇄 시 글자 크기와 페이지 나눔을 확인해 주세요. 작성 분량에 따라 여러 쪽으로 이어집니다.</div></div>
+<div class="panel tabs-preview hidden" id="fullPreviewPanel"><div class="previewtop"><div><div class="mini">LIVE PREVIEW · A4 2단</div><h2>학술집 형식 미리보기</h2></div><div class="actionline"><button class="btn" id="backEditorBtn">← 편집으로 돌아가기</button><button class="btn" id="zoomOutBtn" title="미리보기 축소">−</button><span id="zoomPct" style="font-size:12px;color:#63818c;font-weight:800">맞춤</span><button class="btn" id="zoomInBtn" title="미리보기 확대">＋</button><button class="btn primary" id="previewPrintBtn"><svg><use href="#i-print"/></svg>PDF로 인쇄</button></div></div><div class="paper-wrap" id="previewPaperWrap"><div class="paper-stack" id="paperLive"></div></div><div class="hint">학교 원본 양식의 목차·2단 구성에 맞춘 <b>작성용 미리보기</b>입니다. 실제 인쇄 시 글자 크기와 페이지 나눔을 확인해 주세요. 작성 분량에 따라 여러 쪽으로 이어집니다.</div></div>
 </main>
 <aside class="assist"><div class="progress-line"><span>작성 진행도</span><strong id="progressPct">0%</strong></div><div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div><h3>논문 작성 체크</h3><ul class="overview" id="overview"></ul><div class="divider"></div><h3>문서 미리보기</h3><div class="mini-preview" id="miniPreview"><b>연구 제목을 입력해 주세요</b><p class="muted">기본정보부터 작성하면 미리보기가 표시됩니다.</p></div><button class="btn primary" id="asidePreviewBtn">전체 논문 미리보기</button><p class="sidebar-note" style="border-top:0;padding:9px 0 0;margin:0">자료는 현재 기기에만 저장됩니다.<br>브라우저 기록을 지우면 삭제될 수 있습니다.</p></aside>
 </div><footer class="app-footer">안성여자고등학교 R&E · 2026-2 학술집 양식 기반 학습용 작성 도구 · 단독 HTML / 오프라인 지원</footer></div>
-<div id="print-only"><div class="paper" id="paperPrint"></div></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="print-only"><div class="paper-stack" id="paperPrint"></div></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (()=>{'use strict';
 const STORAGE='anseong-paper-studio-2026-v1';
@@ -131,6 +144,171 @@ async function handleImage(file){if(!file)return;if(!file.type.startsWith('image
 function importJson(file){if(!file)return;const reader=new FileReader();reader.onload=()=>{try{let obj=JSON.parse(reader.result);if(!confirm('현재 내용을 가져온 백업 파일로 바꿀까요?'))return;data=normalize(obj);readFields();updated();showStep(0);toast('백업 파일을 불러왔습니다.')}catch(err){toast('올바른 JSON 백업 파일이 아닙니다.')}};reader.readAsText(file)}
 function bind(){document.addEventListener('input',e=>{let el=e.target;if(el.dataset.bind){data[el.dataset.bind]=el.value;updated()}else if(el.dataset.list){let row=data[el.dataset.list]?.[Number(el.dataset.index)];if(row){row[el.dataset.key]=el.value;updated()}}});document.addEventListener('change',e=>{if(e.target.dataset.bind){data[e.target.dataset.bind]=e.target.value;updated()}});
 $('nav').addEventListener('click',e=>{let b=e.target.closest('[data-step]');if(b)showStep(Number(b.dataset.step))});$('prevBtn').onclick=()=>showStep(step-1);$('nextBtn').onclick=()=>step===6?showPreview():showStep(step+1);$('previewBtn').onclick=showPreview;$('asidePreviewBtn').onclick=showPreview;$('backEditorBtn').onclick=()=>showStep(step);$('previewPrintBtn').onclick=$('printBtn').onclick=()=>{refreshPaper();window.print()};$('zoomOutBtn').onclick=()=>{paperZoom-=.1;applyZoom()};$('zoomInBtn').onclick=()=>{paperZoom+=.1;applyZoom()};window.addEventListener('resize',()=>{if(previewMode)fitPaper()});$('addAuthor').onclick=()=>{if(data.authors.length>=6){toast('작성자는 최대 6명입니다.');return}data.authors.push({name:'',grade:'',className:''});drawRepeated();updated()};$('addTheory').onclick=()=>{if(data.theory.length>=15)return toast('항목은 최대 15개입니다.');data.theory.push({heading:'',body:''});drawRepeated();updated()};$('addResult').onclick=()=>{if(data.results.length>=15)return toast('항목은 최대 15개입니다.');data.results.push({heading:'',body:''});drawRepeated();updated()};document.addEventListener('click',e=>{let b=e.target.closest('[data-remove]');if(!b)return;let key=b.dataset.remove,idx=Number(b.dataset.index);if(data[key].length<=1)return;data[key].splice(idx,1);drawRepeated();updated()});$('figureFile').addEventListener('change',e=>handleImage(e.target.files[0]));$('removeFigure').onclick=()=>{data.figureImage='';refreshFigure();updated()};$('backupBtn').onclick=exportJson;$('jsonBtn').onclick=exportJson;$('docBtn').onclick=exportDoc;$('textBtn').onclick=exportTxt;$('loadBtn').onclick=()=>$('importFile').click();$('importFile').addEventListener('change',e=>{importJson(e.target.files[0]);e.target.value=''});$('copyAiBtn').onclick=copyAi;$('demoBtn').onclick=handleSample;$('clearBtn').onclick=handleClear;window.addEventListener('beforeprint',refreshPaper);window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save();exportJson()}})}
+/* v2: 실제 A4 페이지 단위 2단 흐름 및 WordprocessingML DOCX */
+function paperUnits(){
+  const root=document.createElement('div');root.innerHTML=buildPaper();
+  const columns=root.querySelector('.paper-columns');
+  const header=Array.from(root.children).filter(n=>n!==columns);
+  const items=[];
+  columns?.querySelectorAll('.paper-block').forEach(block=>{
+    Array.from(block.children).forEach(node=>{
+      if(node.tagName==='FIGURE' && node.querySelector('table')){
+        const svg=node.querySelector('svg'),tbl=node.querySelector('table'),cap=node.querySelector('figcaption');
+        if(svg){const wrap=document.createElement('figure');wrap.className='figure';wrap.append(svg.cloneNode(true));items.push(wrap)}
+        if(tbl)items.push(tbl.cloneNode(true));
+        if(cap){const cp=document.createElement('p');cp.className='source-note';cp.textContent=cap.textContent;items.push(cp)}
+      }else items.push(node.cloneNode(true));
+    });
+  });
+  return {header,items};
+}
+function paginatePaper(){
+  const {header,items}=paperUnits();
+  const stage=document.createElement('div');stage.className='pagination-stage';document.body.appendChild(stage);
+  const pages=[];let page=null,col=null,remaining=items.slice(),iterations=0;
+  function newPage(){
+    page=document.createElement('article');page.className='paper paper-page';
+    if(!pages.length){const h=document.createElement('div');h.className='paper-first-header';header.forEach(n=>h.appendChild(n.cloneNode(true)));page.appendChild(h)}
+    const body=document.createElement('div');body.className='paper-columns-flow';
+    for(let c=0;c<2;c++){const cell=document.createElement('div');cell.className='paper-column-flow';body.appendChild(cell)}
+    page.appendChild(body);stage.appendChild(page);pages.push(page);col=body.children[0];
+    const pageSty=getComputedStyle(page),innerHeight=page.clientHeight-parseFloat(pageSty.paddingTop)-parseFloat(pageSty.paddingBottom);
+    const h=page.querySelector('.paper-first-header');let free=innerHeight-(h?h.getBoundingClientRect().height:0)-7;
+    free=Math.max(65,free);
+    body.style.height=free+'px';
+    return free;
+  }
+  let available=newPage(),colIndex=0;
+  function nextColumn(){if(colIndex===0){colIndex=1;col=page.querySelector('.paper-columns-flow').children[1]}else{colIndex=0;available=newPage()}}
+  function measured(){return col.getBoundingClientRect().height>available+1 || col.scrollHeight>available+1}
+  function splitText(node){
+    const original=node.textContent||'';
+    if(original.length<12 || !['P','H4','H5'].includes(node.tagName))return null;
+    let lo=1,hi=original.length,best=0;
+    while(lo<=hi){let mid=(lo+hi)>>1;node.textContent=original.slice(0,mid);if(!measured()){best=mid;lo=mid+1}else hi=mid-1}
+    if(best<8){node.textContent=original;return null}
+    let cut=best;
+    for(let k=best;k>Math.max(4,best-36);k--){if(/[\s,.!?;:。·，)]/.test(original[k-1])){cut=k;break}}
+    if(cut<best*.7)cut=best;
+    node.textContent=original.slice(0,cut).trimEnd();
+    const tail=node.cloneNode(false);tail.textContent=original.slice(cut).trimStart();
+    if(!tail.textContent){return null}
+    return tail;
+  }
+  while(remaining.length&&iterations++<3000){
+    const item=remaining.shift();
+    col.appendChild(item);
+    if(!measured()){
+      if(/^H[345]$/.test(item.tagName)&&available-col.getBoundingClientRect().height<36){col.removeChild(item);remaining.unshift(item);nextColumn()}
+      continue;
+    }
+    const tail=splitText(item);
+    if(tail){remaining.unshift(tail);nextColumn();continue}
+    col.removeChild(item);
+    if(col.childElementCount===0){
+      // 길이가 아주 큰 표는 행별로 분할하여 모든 데이터 유지
+      if(item.tagName==='TABLE'&&item.tBodies?.[0]?.rows.length>1){
+        const rows=Array.from(item.tBodies[0].rows),cut=Math.max(1,Math.floor(rows.length/2));
+        const first=item.cloneNode(true),second=item.cloneNode(true);
+        while(first.tBodies[0].rows.length>cut)first.tBodies[0].deleteRow(cut);
+        while(second.tBodies[0].rows.length>rows.length-cut)second.tBodies[0].deleteRow(0);
+        remaining.unshift(first,second);continue;
+      }
+      // 극단적인 이미지/그래프에서도 빈 페이지 무한반복을 피함
+      col.appendChild(item);item.classList.add('oversized-block');nextColumn();continue;
+    }
+    remaining.unshift(item);nextColumn();
+  }
+  pages.forEach((p,i)=>{let f=document.createElement('div');f.className='paper-page-no';f.textContent=`${i+1} / ${pages.length}`;p.appendChild(f)});
+  const result=pages.map(p=>p.cloneNode(true));stage.remove();return result;
+}
+refreshPaper=function(){
+  const pages=paginatePaper();
+  $('paperLive').replaceChildren(...pages.map(p=>p.cloneNode(true)));
+  $('paperPrint').replaceChildren(...pages.map(p=>p.cloneNode(true)));
+};
+const oldShowPreview=showPreview;
+showPreview=function(){previewMode=true;$('editorPanel').classList.add('hidden');$('fullPreviewPanel').classList.remove('hidden');refreshPaper();requestAnimationFrame(fitPaper);window.scrollTo({top:0,behavior:'smooth'})};
+
+const wordXmlEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
+function wordText(s){return String(s??'').split('\n').map((part,i)=>`${i?'<w:br/>':''}<w:t xml:space="preserve">${wordXmlEsc(part)}</w:t>`).join('')}
+function wordP(s,style='body'){
+  const config={title:[34,'center',260,1],author:[19,'center',75,0],abstractHead:[22,'center',150,1],abstract:[19,'both',180,0],keywords:[18,'left',170,0],h3:[24,'center',120,1],h4:[20,'left',80,1],h5:[19,'left',65,1],body:[18,'both',105,0],ref:[17,'left',100,0],caption:[16,'center',125,0],warning:[18,'center',120,1]};
+  const [sz,align,after,bold]=config[style]||config.body;
+  const keep=['h3','h4','h5'].includes(style)?'<w:keepNext/>':'';
+  const pPr=`<w:pPr>${keep}<w:jc w:val="${align}"/><w:spacing w:after="${after}" w:line="315" w:lineRule="auto"/></w:pPr>`;
+  const rPr=`<w:rPr><w:rFonts w:ascii="Batang" w:hAnsi="Batang" w:eastAsia="Batang"/><w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/>${bold?'<w:b/>':''}</w:rPr>`;
+  return `<w:p>${pPr}<w:r>${rPr}${wordText(s)}</w:r></w:p>`;
+}
+function wordTable(rows){
+  if(rows.length<2)return '';
+  const cols=Math.max(...rows.map(x=>x.length));let w=Math.floor(4677/cols);
+  const cell=(v,header)=>`<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/></w:tcPr>${wordP(v,header?'h5':'ref')}</w:tc>`;
+  return `<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>${['top','left','bottom','right','insideH','insideV'].map(k=>`<w:${k} w:val="single" w:sz="4" w:color="777777"/>`).join('')}</w:tblBorders></w:tblPr><w:tblGrid>${Array.from({length:cols},()=>`<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${rows.map((r,i)=>`<w:tr>${Array.from({length:cols},(_,j)=>cell(r[j]||'',i===0)).join('')}</w:tr>`).join('')}</w:tbl>`;
+}
+function makeZip(files){
+  const encoder=new TextEncoder(),parts=[],centers=[],now=new Date();
+  const dt=((now.getHours()&31)<<11)|((now.getMinutes()&63)<<5)|((Math.floor(now.getSeconds()/2))&31);
+  const dd=(((now.getFullYear()-1980)&127)<<9)|(((now.getMonth()+1)&15)<<5)|(now.getDate()&31);
+  let offset=0;
+  function crc32(data){let x=0xffffffff;for(const b of data){x^=b;for(let j=0;j<8;j++)x=x&1?(x>>>1)^0xedb88320:(x>>>1)}return (x^0xffffffff)>>>0}
+  function u16(a,n){a.push(n&255,n>>>8&255)}function u32(a,n){u16(a,n);u16(a,n>>>16)}
+  Object.entries(files).forEach(([name,value])=>{
+    const n=encoder.encode(name),b=value instanceof Uint8Array?value:encoder.encode(value),crc=crc32(b),loc=[];
+    u32(loc,0x04034b50);u16(loc,20);u16(loc,2048);u16(loc,0);u16(loc,dt);u16(loc,dd);u32(loc,crc);u32(loc,b.length);u32(loc,b.length);u16(loc,n.length);u16(loc,0);
+    parts.push(new Uint8Array(loc),n,b);
+    const c=[];u32(c,0x02014b50);u16(c,20);u16(c,20);u16(c,2048);u16(c,0);u16(c,dt);u16(c,dd);u32(c,crc);u32(c,b.length);u32(c,b.length);u16(c,n.length);u16(c,0);u16(c,0);u16(c,0);u16(c,0);u32(c,0);u32(c,offset);centers.push(new Uint8Array(c),n);
+    offset+=loc.length+n.length+b.length;
+  });
+  const cdsize=centers.reduce((s,c)=>s+c.length,0),end=[];
+  u32(end,0x06054b50);u16(end,0);u16(end,0);u16(end,Object.keys(files).length);u16(end,Object.keys(files).length);u32(end,cdsize);u32(end,offset);u16(end,0);
+  return new Blob([...parts,...centers,new Uint8Array(end)],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}
+function imageBytes(dataUri){let [meta,payload]=dataUri.split(',');let bin=atob(payload),out=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i);return {bytes:out,ext:meta.includes('jpeg')?'jpeg':'png'}}
+async function graphPng(rows){
+  const svg=chartSvg(rows,data.chartType);if(!svg)return null;
+  const img=new Image(),url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+  try{img.src=url;await img.decode();const cvs=document.createElement('canvas');cvs.width=1000;cvs.height=508;const ctx=cvs.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,1000,508);ctx.drawImage(img,0,0,1000,508);return cvs.toDataURL('image/png')}
+  catch(e){return null}finally{URL.revokeObjectURL(url)}
+}
+function wordDrawing(id,cx,cy){
+  return `<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="연구 결과 이미지 ${id}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name="image${id}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId${id}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
+}
+async function buildDocx(){
+  const files={},imgs=[],refs=[];
+  function addImg(uri,cmWidth,ratio=1.6){if(!uri)return '';let im=imageBytes(uri),id=imgs.length+1,name=`word/media/image${id}.${im.ext}`;files[name]=im.bytes;imgs.push({id,name,type:im.ext});let cx=Math.round(cmWidth*360000),cy=Math.round(cx/ratio);return wordDrawing(id,cx,cy)}
+  const page='<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1020" w:right="1020" w:bottom="1080" w:left="1020" w:header="400" w:footer="400" w:gutter="0"/>';
+  let body=wordP(data.title||'연구 제목을 작성하세요','title');
+  (data.authors.filter(a=>nonEmpty(a.name)).length?data.authors.filter(a=>nonEmpty(a.name)):[{name:'성명',grade:'0',className:'0'}]).forEach(a=>{body+=wordP(`${a.name} (${a.grade||'0'}학년 ${a.className||'0'}반)`,'author')});
+  body+=wordP('<초록>','abstractHead')+wordP(data.abstract||'본 탐구는 ...','abstract')+wordP('주제어: '+(data.keywords||'주제어 1, 주제어 2, 주제어 3'),'keywords');
+  if(data.demo)body+=wordP('※ 교육용 가상 데이터 예시 — 실제 연구 결과로 제출하지 마세요.','warning');
+  body+=`<w:p><w:pPr><w:sectPr><w:type w:val="continuous"/>${page}<w:cols w:num="1"/></w:sectPr></w:pPr></w:p>`;
+  const h=(s)=>wordP(s,'h3'),sub=(s)=>wordP(s,'h4'),minor=s=>wordP(s,'h5'),p=s=>wordP(s||'내용을 작성해 주세요.');
+  body+=h('Ⅰ. 서론')+sub('1. 탐구의 필요성 및 목적')+p(data.introPurpose)+sub('2. 탐구 문제');
+  if(nonEmpty(data.introQuestions)){body+=p('앞선 탐구의 목적에 따라 본 탐구에서 설정한 구체적인 탐구 문제는 다음과 같다.');lines(data.introQuestions).forEach((q,i)=>{q=q.replace(/^(첫째|둘째|셋째|넷째|다섯째|여섯째|일곱째|여덟째|아홉째|열째)\s*[,，.、]?\s*/,'');body+=p(`${ordinals[i]||'추가'}, ${q}`)})}else body+=p('');
+  body+=h('Ⅱ. 이론적 배경');if(nonEmpty(data.theoryIntro))body+=p(data.theoryIntro);
+  data.theory.forEach((x,i)=>{if(nonEmpty(x.heading)||nonEmpty(x.body))body+=sub(`${i+1}. ${x.heading||'이론적 배경'}`)+p(x.body)});
+  body+=h('Ⅲ. 탐구 방법')+sub('1. 탐구 대상')+p(data.methodSubject)+sub('2. 탐구 절차')+p(data.methodSteps)+sub('3. 자료 수집 방법 및 절차')+p(data.methodCollection);
+  body+=h('Ⅳ. 탐구 결과 및 분석')+sub('1. 탐구 결과');
+  data.results.forEach((x,i)=>{if(nonEmpty(x.heading))body+=minor((i===0?'가.':i===1?'나.':`${i+1}.`)+' '+x.heading);if(nonEmpty(x.body))body+=p(x.body)});
+  const rows=parseCsv(data.chartCsv);
+  if(rows.length>1){if(data.chartType!=='table'){let chart=await graphPng(rows);if(chart)body+=addImg(chart,8.05,1000/508)}body+=wordTable(rows)+wordP(`${data.chartTitle||'표 1. 탐구 결과 자료'} (단위: ${data.chartUnit||'원자료 확인'})`,'caption')}
+  if(data.figureImage){body+=addImg(data.figureImage,7.9,1.6)+wordP(data.figureCaption||'그림 1. 연구 참고 사진','caption')}
+  body+=sub('2. 탐구 결과 분석')+p(data.resultAnalysis)+h('Ⅴ. 논의 및 결론');
+  [['1. 요약','conclusionSummary'],['2. 논의','conclusionDiscussion'],['3. 결론','conclusionAnswer'],['4. 한계 및 제언','conclusionLimits']].forEach(([heading,key])=>{if(nonEmpty(data[key]))body+=sub(heading)+p(data[key])});
+  if(nonEmpty(data.references)){body+=h('참고문헌');lines(data.references).forEach(x=>body+=wordP(x,'ref'))}
+  body+=`<w:sectPr><w:type w:val="continuous"/>${page}<w:cols w:num="2" w:space="510"/></w:sectPr>`;
+  files['word/document.xml']=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><w:body>${body}</w:body></w:document>`;
+  files['[Content_Types].xml']=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpeg" ContentType="image/jpeg"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`;
+  files['_rels/.rels']=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`;
+  files['word/_rels/document.xml.rels']=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${imgs.map(im=>`<Relationship Id="rId${im.id}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image${im.id}.${im.type}"/>`).join('')}</Relationships>`;
+  return makeZip(files);
+}
+exportDoc=async function(){
+  try{toast('A4 2단 Word 문서를 만드는 중입니다.');const blob=await buildDocx();const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename()+'.docx';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);toast('편집 가능한 .docx 문서를 저장했습니다.')}
+  catch(e){console.error(e);toast('Word 저장 실패: '+String(e.message||e))}
+};
+
 safeLoad();readFields();bind();refreshProgress();refreshMini();showStep(0);save();
 })();
 </script>
